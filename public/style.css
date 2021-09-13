@@ -1,0 +1,49 @@
+* {
+    font-family: Arial, Helvetica, sans-serif;
+    list-style: none;
+    resize: none;
+    text-decoration: none;
+    color: black;
+}
+
+ul {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    margin: 20px;
+}
+
+#chatScreen {
+    height: 60vh;
+    width: 80vw;
+    /* max-width: 500px; */
+    max-height: 500px;
+    border: 1px black solid;
+    margin-bottom: 10px;
+}
+
+#text{
+    width: 70vw;
+}
+
+.userContent{
+    background-color: aliceblue;
+    max-width: 500px;
+    display: flex;
+    justify-content: space-between;
+    margin: 5px;
+    padding: 10px;
+}
+#register{
+    display: flex;
+    flex-direction: column;
+    max-width: 300px;
+}
+#register input{
+    margin-bottom: 5px;
+}
+#register button{
+    width: 100px;
+}

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/style.css">
+    <title>Chat - Admin</title>
+</head>
+
+<body>
+    <h2>Chat Online</h2>
+    <h3>User: <span id="user"><%= name %></span> </h3>
+    <div id="chatScreen">
+        <ul></ul>
+    </div>
+    <form autocomplete="off">
+        <textarea name="text" id="text" placeholder="Digitar...." autofocus rows="3"></textarea>
+        <button>Enviar</button>
+    </form>
+
+    <a style="margin-top: 20px; display: inline-block;" href="/logout">Logout</a>
+    <br>
+    <a style="margin-top: 20px; display: inline-block;" href="/register">Painel de Usuários</a>
+
+    <button onclick="erase()" style="margin-top: 20px; display: block;" href="/erase">Apagar Conversas</button>
+
+
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="./chat.js"></script>
+</body>
+
+</html>

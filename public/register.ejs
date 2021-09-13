@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat - Register</title>
+    <link rel="stylesheet" href="/style.css">
+
+</head>
+
+<body>
+    <h2>Lista de Usuários</h2>
+    <div>
+        <% for(let i=0;i<user.length;i++){ %>
+            <div class="user" id='<%= user[i]._id %>'>
+                <div class="userContent">
+                    <div>Usuário: <b><%= user[i].name%></b></div>
+                    <button onclick="deleteUser('<%= user[i]._id %>')">Deletar</button>
+                </div>
+            </div>
+            <%} %>
+    </div>
+    
+    <h3>Registrar Novo Usuário</h3>
+
+    <form id="register" autocomplete="off" action="/register" method="POST">
+        <input type="text" placeholder="Nome..." name="name" required>
+        <input type="email" placeholder="Email..." name="email" required>
+        <input type="password" placeholder="Password..." name="password" required minlength="6">
+        <button>Registrar</button>
+    </form>
+
+    <% if (err) { %>
+        <div><%= err %> </div>
+       <% } %>
+
+    <a style="display: inline-block; margin-top: 30px;" href="/admin">Voltar para página do administrador</a>
+
+    <script>
+        function deleteUser(id){
+            let confirmAc = confirm('Ao clicar em ok deletará o usuário')
+            if(confirmAc)fetch(`deleteuser/${id}`).then(data=>location.href='/register')
+        }
+    </script>
+</body>
+
+</html>
