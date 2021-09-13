@@ -7,6 +7,7 @@ const cookieParser = require("cookie-parser")
 const socketIO = require('socket.io')
 const fun = require('./functions')
 const fs = require('fs')
+const msgDB = process.env.MSG_DB
 
 
 mogoose.connect(process.env.URL_MONGO, (err, db) => {
@@ -18,10 +19,10 @@ app.set('view engine', 'ejs')
 app.set('views', (__dirname + '/public'))
 app.use(express.static(__dirname + '/public'))
 app.use(cookieParser())
-// app.use("*", (req, res, next) => {
-//     if (req.headers['x-forwarded-proto'] == 'https') next()
-//     else res.redirect('https://' + req.headers.host + req.originalUrl)
-// })
+app.use("*", (req, res, next) => {
+    if (req.headers['x-forwarded-proto'] == 'https') next()
+    else res.redirect('https://' + req.headers.host + req.originalUrl)
+})
 
 
 app.use('/', express.json(), express.urlencoded())
@@ -55,7 +56,7 @@ io.on('connection', (socket) => {
         msg.push(data)
         io.emit('update', msg)
         let msgJson = JSON.stringify(msg)
-        fs.writeFile('messegeDB.txt', `${msgJson}`, function (err) {
+        fs.writeFile(msgDB, `${msgJson}`, function (err) {
             if (err) { throw err }
             return
         })
@@ -64,7 +65,7 @@ io.on('connection', (socket) => {
         msg = data
         io.emit('update', msg)
         let msgJson = JSON.stringify(msg)
-        fs.writeFile('messegeDB.txt', `${msgJson}`, function (err) {
+        fs.writeFile(msgDB, `${msgJson}`, function (err) {
             if (err) { throw err }
             return
         })
