@@ -43,7 +43,7 @@ const io = socketIO(server)
 
 let msg = []
 
-fs.readFile('messegeDB.txt', 'UTF8', function (err, data) {
+fs.readFile(msgDB, 'UTF8', function (err, data) {
     if (err) { throw err }
     data == "" ? msg = [] : msg = JSON.parse(data)
 })
