@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,21 +10,29 @@
 </head>
 
 <body>
-    <h2>Chat Online</h2>
-    <h3>User: <span id="user"><%= name %></span> </h3>
-    <div id="chatScreen">
-        <ul></ul>
-    </div>
-    <form autocomplete="off">
-        <textarea name="text" id="text" placeholder="Digitar...." autofocus rows="3"></textarea>
-        <button>Enviar</button>
+    <header>
+        <h2>Chat Online</h2>
+        <h3>User Name: <span id="user"><%= name %></span> </h3>
+        <a class="link" href="/logout">Logout</a>
+    </header>
+
+    <div id="chatScreen"></div>
+    
+    <form id="textSend" autocomplete="off">
+        <textarea onkeypress="enterTextArea(event)" name="text" id="text" placeholder="Digitar...." autofocus></textarea>
+        <button class="send">Enviar</button>
     </form>
 
-    <a style="margin-top: 20px; display: inline-block;" href="/logout">Logout</a>
+    <br>
+
+    <% if (admin) { %>
+        <a class="link" href="/register">Painel de Usuários</a>
+        <div><button class="deleteMsg" onclick="erase()" href="/erase">Apagar Conversas</button></div>
+        <% } %>
 
 
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="./chat.js"></script>
+            <script src="/socket.io/socket.io.js"></script>
+            <script src="./chat.js"></script>
 </body>
 
 </html>

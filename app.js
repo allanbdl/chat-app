@@ -1,13 +1,12 @@
 require('dotenv').config()
 const express = require('express')
 const app = express()
-const PORT = process.env.PORT
+const PORT = process.env.PORT || 3000
 const mogoose = require('mongoose')
 const cookieParser = require("cookie-parser")
 const socketIO = require('socket.io')
 const fun = require('./functions')
-const fs = require('fs')
-const msgDB = process.env.MSG_DB
+const Msg = require('./models/Msg')
 
 
 mogoose.connect(process.env.URL_MONGO, (err, db) => {
@@ -19,11 +18,13 @@ app.set('view engine', 'ejs')
 app.set('views', (__dirname + '/public'))
 app.use(express.static(__dirname + '/public'))
 app.use(cookieParser())
-app.use("*", (req, res, next) => {
-    if (req.headers['x-forwarded-proto'] == 'https') next()
-    else res.redirect('https://' + req.headers.host + req.originalUrl)
-})
 
+if (process.env.AMB != 'dev') {
+    app.use("*", (req, res, next) => {
+        if (req.headers['x-forwarded-proto'] == 'https') next()
+        else res.redirect('https://' + req.headers.host + req.originalUrl)
+    })
+}
 
 app.use('/', express.json(), express.urlencoded())
 
@@ -31,46 +32,38 @@ app.get('/login', fun.login)
 app.get('/logout', fun.logout)
 app.post('/login', fun.loginPost)
 app.get('/', fun.verifyLog, fun.index)
-app.get('/admin', fun.verifyLog, fun.verifyAdmin, fun.admin)
 app.get('/register', fun.verifyLog, fun.verifyAdmin, fun.allUser)
 app.post('/register', fun.verifyLog, fun.verifyAdmin, fun.registerPost)
 app.get('/deleteuser/:id', fun.verifyLog, fun.verifyAdmin, fun.delete)
 
-
-
 const server = app.listen(PORT, () => console.log('Server Running', PORT))
 const io = socketIO(server)
 
-let msg = []
+io.on('connection', async (socket) => {
 
-fs.readFile(msgDB, 'UTF8', function (err, data) {
-    if (err) { throw err }
-    data == "" ? msg = [] : msg = JSON.parse(data)
-})
+    let msgDB = await Msg.findOne({})
+    let msg = msgDB.msg
 
-io.on('connection', (socket) => {
-    // console.log('new connection')
     socket.emit('update', msg)
 
     socket.on('new', data => {
-        msg.push(data)
+        msg.push(JSON.parse(data))
+        Msg.findOneAndUpdate({}, { msg }).then(()=>{return})
         io.emit('update', msg)
-        let msgJson = JSON.stringify(msg)
-        fs.writeFile(msgDB, `${msgJson}`, function (err) {
-            if (err) { throw err }
-            return
-        })
+
     })
     socket.on('erase', data => {
         msg = data
+        Msg.findOneAndUpdate({}, { msg }).then((data) => console.log(data, msg))
         io.emit('update', msg)
-        let msgJson = JSON.stringify(msg)
-        fs.writeFile(msgDB, `${msgJson}`, function (err) {
-            if (err) { throw err }
-            return
-        })
+    })
+
+    socket.on('ereaseOne',data=>{
+        // console.log(msg,data)
+        msg =msg.filter(doc=>{return doc.date!=data})
+        Msg.findOneAndUpdate({}, { msg }).then((data) => console.log(data, msg))
+        io.emit('update', msg)
     })
 })
-
 
 
