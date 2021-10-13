@@ -22,9 +22,15 @@ function updateScreen(msg) {
     let screenChat = document.querySelector('#chatScreen')
     let list = ''
     msg.forEach(element => {
-        if (element.user == user)
-            list += `<div class="MychatMsg"><div onClick="del(event, '${element.user}')"  id="${element.date}" class="myMsg"><b>Você</b> diz: ${element.text}</div></div>`
-        else list += `<div class=""><div onClick="del(event, '${element.user}')"  id="${element.date}"  class="msg"><b>${element.user}</b> diz: ${element.text}</div></div>`
+        let name = element.user.charAt(0).toUpperCase() + element.user.slice(1);
+        if (name == user) list += `<div class="MychatMsg">
+                                        <div class="myMsg">
+                                        <b>Você</b> <span id="${element.date}" onClick="modal(event, '${name}')" class="pointer">diz: ${element.text}</span>
+                                    </div></div>`
+        else list += `<div class="">
+                        <div class="msg">
+                        <b>${name}</b> <span id="${element.date}" onClick="modal(event, '${name}')" class="pointer">diz: ${element.text}</span>
+                    </div></div>`
     });
     document.querySelector('#chatScreen').innerHTML = list
     screenChat.scrollTo(0, screenChat.scrollHeight)
@@ -47,22 +53,41 @@ function enterTextArea(e) {
     }
 }
 
-function del(e, user) {
+function modal(e, user) {
+    document.querySelector('.modal').classList.remove('hide')
     let thisUser = document.querySelector('#user').innerHTML
+    let modalContainer = document.querySelector('.modalContainer')
     let d = getDate(Number(e.target.id))
     if (thisUser == user) {
-        let confirmA = confirm(`Data de Envio ${d} \n Deseja apagar essa msg?`)
-        if (confirmA) socket.emit('ereaseOne', e.target.id)
+        modalContainer.innerHTML =
+            `<div>Data de Envio ${d}</div>
+            <div><button onClick="del(${e.target.id})">Deletar Mensagem</button></div>`
     }
-    else alert(`Data de Envio ${d}`)
+    else modalContainer.innerHTML = `<div>Data de Envio ${d}</div>`
 }
 
-function getDate(mili){
+function getDate(mili) {
     let d = new Date(mili)
     let year = d.getFullYear()
-    let month = d.getMonth()
-    let day = d.getDay()
+    let month = d.getMonth()+1 <10 ? '0' + d.getMonth()+1  : d.getMonth() +1
+    let day = d.getDate() <10 ? "0" + d.getDate() : d.getDate()
     let hour = d.getHours()
-    let minute = d.getMinutes()
+    let minute = d.getMinutes() < 10 ? "0" + d.getMinutes() : d.getMinutes()
     return `${day}/${month}/${year} - ${hour}:${minute}`
+}
+
+function del(e) {
+    let confirmA = confirm(`Deseja apagar essa msg?`)
+    if (confirmA) {
+        socket.emit('ereaseOne', e)
+        document.querySelector('.modal').classList.add('hide')
+        document.querySelector('.modalContainer').innerHTML = ''
+    }
+}
+
+function hideModal(e) {
+    if (e.target.classList == 'modal') {
+        document.querySelector('.modal').classList.add('hide')
+        document.querySelector('.modalContainer').innerHTML = ''
+    }
 }

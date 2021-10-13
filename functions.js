@@ -5,7 +5,9 @@ const Msg = require('./models/Msg')
 
 
 module.exports.index = (req, res) => {
-    res.render('index', { name: req.user.name, admin: req.user.admin })
+    let str = req.user.name
+    let name = str.charAt(0).toUpperCase() + str.slice(1);
+    res.render('index', { name: name, admin: req.user.admin })
 }
 
 module.exports.loginPost = (req, res) => {
