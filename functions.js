@@ -11,6 +11,7 @@ module.exports.index = (req, res) => {
 }
 
 module.exports.loginPost = (req, res) => {
+    req.body.name = req.body.name.toLowerCase()
     User.findOne({ name: req.body.name }).then(doc => {
         if (!doc) res.render('login', { err: "User Name or Password incorrect" })
         else {
@@ -62,6 +63,7 @@ module.exports.allUser = async (req, res) => {
 }
 
 module.exports.registerPost = async (req, res) => {
+    req.body.name = req.body.name.toLowerCase()
     userName = await User.findOne({ name: req.body.name })
     userEmail = await User.findOne({ name: req.body.email })
     if (userName || userEmail) {

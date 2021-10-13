@@ -59,7 +59,6 @@ io.on('connection', async (socket) => {
     })
 
     socket.on('ereaseOne',data=>{
-        // console.log(msg,data)
         msg =msg.filter(doc=>{return doc.date!=data})
         Msg.findOneAndUpdate({}, { msg }).then((data) => console.log(data, msg))
         io.emit('update', msg)
